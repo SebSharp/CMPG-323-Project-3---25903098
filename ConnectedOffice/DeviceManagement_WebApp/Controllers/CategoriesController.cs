@@ -7,22 +7,23 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DeviceManagement_WebApp.Data;
 using DeviceManagement_WebApp.Models;
+using DeviceManagement_WebApp.Repository;
 
 namespace DeviceManagement_WebApp.Controllers
 {
     public class CategoriesController : Controller
     {
-        private readonly ConnectedOfficeContext _context;
+        private readonly ICategoriesRepository _categoriesRepository;
 
-        public CategoriesController(ConnectedOfficeContext context)
+        public CategoriesController(ICategoriesRepository categoriesRepository)
         {
-            _context = context;
+            _categoriesRepository = categoriesRepository;
         }
 
         // GET: Categories
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Category.ToListAsync());
+            return View(_categoriesRepository.GetAll());
         }
 
         // GET: Categories/Details/5
