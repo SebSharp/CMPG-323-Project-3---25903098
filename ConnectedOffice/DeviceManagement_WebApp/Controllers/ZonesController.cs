@@ -15,7 +15,7 @@ namespace DeviceManagement_WebApp.Controllers
     {
         private readonly IZonesRepository _zonesRepository;
 
-        public ZonesController(IZonesRepository zonesRepository)
+        public ZonesController(IZonesRepository zonesRepository)   //25903098 Create persistant instace of the Repository, Inherited from the Generic Repository
         {
             _zonesRepository = zonesRepository;
         }
@@ -23,7 +23,7 @@ namespace DeviceManagement_WebApp.Controllers
         // GET: Zones
         public async Task<IActionResult> Index()
         {
-            return View(_zonesRepository.GetAll());
+            return View(_zonesRepository.GetAll()); //25903098 Removed all references to _context
         }
 
         // GET: Zones/Details/5
@@ -34,8 +34,8 @@ namespace DeviceManagement_WebApp.Controllers
                 return NotFound();
             }
 
-            var zone = _zonesRepository.ZoneExists(Guid? id)
-                .FirstOrDefaultAsync(m => m.ZoneId == id);
+            var zone = _zonesRepository.AssignZone(id);
+                
             if (zone == null)
             {
                 return NotFound();
@@ -72,7 +72,7 @@ namespace DeviceManagement_WebApp.Controllers
                 return NotFound();
             }
 
-            var zone = _zonesRepository.GetById(Guid? id);
+            var zone = _zonesRepository.GetById(id);
             if (zone == null)
             {
                 return NotFound();
@@ -120,7 +120,7 @@ namespace DeviceManagement_WebApp.Controllers
                 return NotFound();
             }
 
-            var zone = _zonesRepository.AssignZone(Guid ? id);
+            var zone = _zonesRepository.AssignZone(id);
             if (zone == null)
             {
                 return NotFound();
@@ -134,7 +134,7 @@ namespace DeviceManagement_WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var zone = _zonesRepository.GetById(Guid? id);
+            var zone = _zonesRepository.GetById(id);
             _zonesRepository.Remove(zone);
             _zonesRepository.SaveChanges();
             return RedirectToAction(nameof(Index));

@@ -15,7 +15,7 @@ namespace DeviceManagement_WebApp.Controllers
     {
         private readonly IDevicesRepository _devicesRepository;
 
-        public DevicesController(IDevicesRepository devicesRepository)
+        public DevicesController(IDevicesRepository devicesRepository)   //25903098 Create persistant instace of the Repository, Inherited from the Generic Repository
         {
             _devicesRepository = devicesRepository;
         }
@@ -23,8 +23,8 @@ namespace DeviceManagement_WebApp.Controllers
         // GET: Devices
         public async Task<IActionResult> Index()
         {
-            var connectedOfficeContext = _devicesRepository.GetDeviceContext();
-            return View(await connectedOfficeContext.ToListAsync());
+            var connectedOfficeContext = _devicesRepository.GetDeviceContext();   //25903098 Removed all references to _context
+            return View(connectedOfficeContext);
 
         }
 
@@ -36,10 +36,7 @@ namespace DeviceManagement_WebApp.Controllers
                 return NotFound();
             }
 
-            var device = await _context.Device
-                .Include(d => d.Category)
-                .Include(d => d.Zone)
-                .FirstOrDefaultAsync(m => m.DeviceId == id);
+            var device = _devicesRepository.GetDevice(id);
             if (device == null)
             {
                 return NotFound();
@@ -51,8 +48,8 @@ namespace DeviceManagement_WebApp.Controllers
         // GET: Devices/Create
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Category, "CategoryId", "CategoryName");
-            ViewData["ZoneId"] = new SelectList(_context.Zone, "ZoneId", "ZoneName");
+            ViewData["CategoryId"] = _devicesRepository.ViewCatDev();
+            ViewData["ZoneId"] = _devicesRepository.ViewZoneDev();
             return View();
         }
 
@@ -78,13 +75,13 @@ namespace DeviceManagement_WebApp.Controllers
                 return NotFound();
             }
 
-            var device = _devicesRepository.GetById(Guid ? id); 
+            var device = _devicesRepository.GetById(id); 
             if (device == null)
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.Category, "CategoryId", "CategoryName", device.CategoryId);
-            ViewData["ZoneId"] = new SelectList(_context.Zone, "ZoneId", "ZoneName", device.ZoneId);
+            ViewData["CategoryId"] = _devicesRepository.ViewCatDev();
+            ViewData["ZoneId"] = _devicesRepository.ViewZoneDev();
             return View(device);
         }
 
@@ -127,10 +124,8 @@ namespace DeviceManagement_WebApp.Controllers
                 return NotFound();
             }
 
-            var device = await _context.Device
-                .Include(d => d.Category)
-                .Include(d => d.Zone)
-                .FirstOrDefaultAsync(m => m.DeviceId == id);
+            var device = _devicesRepository.GetDevice(id);
+
             if (device == null)
             {
                 return NotFound();
@@ -144,7 +139,7 @@ namespace DeviceManagement_WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var device = _devicesRepository.GetById(Guid? id);
+            var device = _devicesRepository.GetById(id);
             _devicesRepository.Remove(device);
             _devicesRepository.SaveChanges();
             return RedirectToAction(nameof(Index));

@@ -15,7 +15,7 @@ namespace DeviceManagement_WebApp.Controllers
     {
         private readonly ICategoriesRepository _categoriesRepository;
 
-        public CategoriesController(ICategoriesRepository categoriesRepository)
+        public CategoriesController(ICategoriesRepository categoriesRepository) //25903098 Create persistant instace of the Repository, Inherited from the Generic Repository
         {
             _categoriesRepository = categoriesRepository;
         }
@@ -23,7 +23,7 @@ namespace DeviceManagement_WebApp.Controllers
         // GET: Categories
         public async Task<IActionResult> Index()
         {
-            return View(_categoriesRepository.GetAll());
+            return View(_categoriesRepository.GetAll());  // 25903098 Removed all references to _context
         }
 
         // GET: Categories/Details/5
@@ -34,7 +34,7 @@ namespace DeviceManagement_WebApp.Controllers
                 return NotFound();
             }
 
-            var category = _categoriesRepository.AssignCategory(Guid? id);
+            var category = _categoriesRepository.AssignCategory(id);
 
             if (category == null)
             {
@@ -72,7 +72,7 @@ namespace DeviceManagement_WebApp.Controllers
             }
 
             //var category = await _context.Category.FindAsync(id);
-            var category = _categoriesRepository.GetById(Guid? id);
+            var category = _categoriesRepository.GetById(id);
             if (category == null)
             {
                 return NotFound();
@@ -118,7 +118,7 @@ namespace DeviceManagement_WebApp.Controllers
                 return NotFound();
             }
 
-            var category = _categoriesRepository.AssignCategory(Guid ? id);
+            var category = _categoriesRepository.AssignCategory(id);
 
             if (category == null)
             {
@@ -133,7 +133,7 @@ namespace DeviceManagement_WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var category = _categoriesRepository.GetById(Guid? id);
+            var category = _categoriesRepository.GetById(id);
             _categoriesRepository.Remove(category);
             _categoriesRepository.SaveChanges();
             return RedirectToAction(nameof(Index));

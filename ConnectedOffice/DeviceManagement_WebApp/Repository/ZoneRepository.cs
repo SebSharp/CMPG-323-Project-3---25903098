@@ -18,17 +18,18 @@ namespace DeviceManagement_WebApp.Repository
         }
         public bool ZoneExists(Guid id)
         {
-            return _context.Zone.Any(e => e.ZoneId == id);
+            return _context.Zone.Any(e => e.ZoneId == id); //25903098 We use this to set the conext for any one zone to see if it exists
         }
-        public Zone AssignZone(Guid? id)
+
+        public async Task<Zone> AssignZone(Guid? id)
         {
-            var zone = _context.Zone.FirstOrDefaultAsync(m => m.ZoneId == id);
-            return zone;
+            var zone = await _context.Zone.FirstOrDefaultAsync(m => m.ZoneId == id); //25903098 We use this to set the context asynchronously via a Task 
+            return zone; 
 
         }
         public void UpdateZone(Zone zone)
         {
-            _context.Update(zone);
+            _context.Update(zone);  //25903098 Custom Update method for Zones only
         }
 
     }

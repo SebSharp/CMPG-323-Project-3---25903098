@@ -19,15 +19,15 @@ namespace DeviceManagement_WebApp.Repository
 
         public bool CategoryExists(Guid id)
         {
-            return _context.Category.Any(e => e.CategoryId == id);
+            return _context.Category.Any(e => e.CategoryId == id); //25903098 We use this to set the conext for any one category to see if it exists
         }
 
-        public Category AssignCategory(Guid? id)
+        public async Task<Category> AssignCategory(Guid? id)
         {
-            var category = _context.Category.FirstOrDefaultAsync(m => m.CategoryId == id);
+            var category = await _context.Category.FirstOrDefaultAsync(m => m.CategoryId == id); //25903098 We use this to set the context asynchronously via a Task 
             return category;
         }
-        public void UpdateType(Category category)
+        public void UpdateType(Category category) //25903098 Custom Update method for Categories only
         {
             _context.Update(category);
         }
