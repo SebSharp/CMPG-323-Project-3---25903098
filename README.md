@@ -19,4 +19,5 @@ The user would simply create an account (register), then they are able to view t
 
 This is done via API calls, managed by controllers each with their own Repository class and interface. These repositories get instantiated by a Generic repository ensuring that we follow proper design principles.
 
+To check out the project, simply clone the repository. You will need to provide an AppSettings.json file containing the connection string. 
 
